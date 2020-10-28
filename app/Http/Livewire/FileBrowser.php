@@ -4,9 +4,14 @@ namespace App\Http\Livewire;
 
 use App\Models\Obj;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class FileBrowser extends Component
 {
+
+    use WithFileUploads;
+
+    public $upload;
 
     public $object;
 
@@ -20,6 +25,25 @@ class FileBrowser extends Component
     
     public $renamingObject;
     public $renamingObjectState;
+
+    public $showingFileUploadForm = false;
+
+    // Runs after any update to the Livewire component's data (Using wire:model, not directly inside PHP)
+    // This is a hook that get called once $upload get called
+    // We upload the files to database and local storage, then refresh
+    public function updatedUpload($upload) {
+        $object = $this->currentTeam->objects()->make(['parent_id' => $this->object->id]);
+
+        $object->objectable()->associate($this->currentTeam->files()->create([
+            'name' => $upload->getClientOriginalName(),
+            'size' => $upload->getSize(),
+            'path' => $upload->storePublicly('files', ['disk' => 'local'])
+        ]));
+
+        $object->save();
+
+        $this->object = $this->object->fresh();
+    }
     
 
     // Rename an "object", (folder or file) and save to database, then reset and refresh form

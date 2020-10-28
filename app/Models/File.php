@@ -12,8 +12,23 @@ class File extends Model
 
     protected $fillable = [
         'name',
-        'size'
+        'size',
+        'path'
     ];
+
+
+    // Return a file size in human readable format
+    public function sizeForHumans() {
+        $bytes = $this->size;
+
+        $units = ['b', 'kb', 'gb', 'tb'];
+
+        for ($i = 0; $bytes > 1024; $i++) {
+            $bytes /= 1024;
+        }
+
+        return round($bytes, 2) . $units[$i];
+    }
 
 
     // Run this "booted" function when a new File is created.

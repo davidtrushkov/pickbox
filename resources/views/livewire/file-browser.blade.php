@@ -9,7 +9,7 @@
                     New Folder
                 </button>
 
-                <button class="bg-blue-500 text-white px-6 h-12 rounded-lg font-bold">
+                <button class="bg-blue-500 text-white px-6 h-12 rounded-lg font-bold" wire:click="$set('showingFileUploadForm', true)">
                     Upload Files
                 </button>
             </div>
@@ -99,7 +99,7 @@
                         </td>
                         <td class="py-2 px-3">
                             @if($child->objectable_type === 'file')
-                                {{ $child->objectable->size }}
+                                {{ $child->objectable->sizeForHumans() }}
                             @else
                                 &mdash;
                             @endif
@@ -136,4 +136,32 @@
         @endif
         
     </div>
+
+    <x-jet-modal wire:model="showingFileUploadForm">
+        <div wire:ignore class="m-3 border-dashed border-2" x-data="{
+            initFilepond() {
+                const pond = FilePond.create(this.$refs.filepond, {
+                    onprocessfile: (error, file) => {
+                        pond.removeFile(file.id)
+
+                        if (pond.getFiles().length === 0) {
+                            @this.set('showingFileUploadForm', false)
+                        }
+                    },
+                    allowRevert: false,
+                    server: {
+                        process: (fieldName, file, metdata, load, error, progress, abort, transfer, options) => {
+                            @this.upload('upload', file, load, error, progress)
+                        }
+                    }
+                })
+            }
+        }" x-init="initFilepond">
+            <div>
+                <input type="file" class="" x-ref="filepond" multiple>
+            </div>
+        </div>
+    </x-jet-modal>
+
+
 </div>
