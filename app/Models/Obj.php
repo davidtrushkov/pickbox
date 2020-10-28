@@ -25,6 +25,14 @@ class Obj extends Model
         static::creating(function ($model) {
             $model->uuid = Str::uuid();
         });
+
+        static::deleting(function ($model) {
+            // Delete objectable
+            optional($model->objectable)->delete();
+
+            // Delete decendants
+            $model->descendants->each->delete();
+        });
     }
 
     // "morphTo" the "objectable" to the "objectable" row in "objects" table on Obj Model

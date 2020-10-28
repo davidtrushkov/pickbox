@@ -14,6 +14,7 @@ class DeleteTeam implements DeletesTeams
      */
     public function delete($team)
     {
+        $team->objects->each->delete();
         $team->purge();
     }
 }

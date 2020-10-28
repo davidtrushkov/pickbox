@@ -10,6 +10,7 @@ class FileBrowser extends Component
 {
 
     use WithFileUploads;
+    
 
     public $upload;
 
@@ -24,9 +25,22 @@ class FileBrowser extends Component
     ];
     
     public $renamingObject;
+
     public $renamingObjectState;
 
     public $showingFileUploadForm = false;
+
+    public $confirmingObjectDeletion;
+
+
+    // Delete an object and refresh object
+    public function deleteObject() {
+        Obj::forCurrentTeam()->find($this->confirmingObjectDeletion)->delete();
+
+        $this->confirmingObjectDeletion = null;
+
+        $this->object = $this->object->fresh();
+    }
 
     // Runs after any update to the Livewire component's data (Using wire:model, not directly inside PHP)
     // This is a hook that get called once $upload get called

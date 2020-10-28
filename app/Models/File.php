@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
@@ -36,6 +37,10 @@ class File extends Model
         // When this File is created, create a uuid for a file
         static::creating(function ($model) {
             $model->uuid = Str::uuid();
+        });
+
+        static::deleting(function($model) {
+            Storage::disk('local')->delete($model->path);
         });
     }
 }
