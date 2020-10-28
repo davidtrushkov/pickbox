@@ -19,10 +19,16 @@
     <div class="border-2 border-gray-200 rounded-lg">
         <div class="py-2 px-3">
             <div class="flex items-center">
-                <a href="#" class="font-bold text-gray-400">Breadcrumb</a>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-gray-300 w-5 h-5 mx-1">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
+                @foreach($ancestors as $ancestor)
+                    <a href="{{ route('files', ['uuid' => $ancestor->uuid]) }}" class="font-bold text-gray-400">
+                        {{  $ancestor->objectable->name }}
+                    </a>
+                    @if(!$loop->last)
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-gray-300 w-5 h-5 mx-1">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    @endif
+                @endforeach
             </div>
         </div>
 
@@ -39,7 +45,7 @@
 
                 <tbody>
                     @foreach($object->children as $child)
-                    <tr class="border-gray-100 border-b-2 hover:bg-gray-100">
+                    <tr class="border-gray-100  @if(!$loop->last) border-b-2 @endif hover:bg-gray-100">
                         <td class="py-2 px-3 flex items-center">
                             @if($child->objectable_type === 'file')
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-blue-600">

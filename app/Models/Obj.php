@@ -6,10 +6,11 @@ use App\Models\Traits\RelatesToTeams;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Obj extends Model
 {
-    use HasFactory, RelatesToTeams;
+    use HasFactory, RelatesToTeams, HasRecursiveRelationships;
 
     public $table = 'objects';
 
@@ -31,8 +32,4 @@ class Obj extends Model
         return $this->morphTo();
     }
 
-
-    public function children() {
-        return $this->hasMany(Obj::class, 'parent_id', 'id');
-    }
 }
