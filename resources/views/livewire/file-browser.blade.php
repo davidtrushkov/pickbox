@@ -73,16 +73,27 @@
                             </svg>
                             @endif
 
-                            @if($child->objectable_type === 'folder')
-                            <a href="{{ route('files', ['uuid' => $child->uuid]) }}" class="p-2 font-bold text-blue-600 flex-grow">
-                                {{ $child->objectable->name }}
-                            </a>
-                            @endif
+                            @if($renamingObject === $child->id)
+                               
+                                <form class="flex items-center ml-2 flex-grow" wire:submit.prevent="renameObject">
+                                    <input type="text" class="w-full px-3 h-10 border-2 border-gray-200 rounded-lg mr-2" wire:model="renamingObjectState.name">
 
-                            @if($child->objectable_type === 'file')
-                            <a href="" class="p-2 font-bold text-blue-600 flex-grow">
-                                {{ $child->objectable->name }}
-                            </a>
+                                    <button type="submit" class="bg-blue-500 text-white px-6 h-10 rounded-lg mr-2 font-bold">Rename</button>
+                                    <button wire:click="$set('renamingObject', null)" class="bg-gray-200 px-6 h-10 rounded-lg mr-2 font-bold">Cancel</button>
+                                </form>
+                               
+                            @else
+                                @if($child->objectable_type === 'folder')
+                                <a href="{{ route('files', ['uuid' => $child->uuid]) }}" class="p-2 font-bold text-blue-600 flex-grow">
+                                    {{ $child->objectable->name }}
+                                </a>
+                                @endif
+
+                                @if($child->objectable_type === 'file')
+                                <a href="" class="p-2 font-bold text-blue-600 flex-grow">
+                                    {{ $child->objectable->name }}
+                                </a>
+                                @endif
                             @endif
 
                         </td>
@@ -100,7 +111,7 @@
                             <div class="flex justify-end items-center">
                                 <ul class="flex items-center">
                                     <li class="mr-4">
-                                        <button class="text-gray-400 font-bold">
+                                        <button wire:click="$set('renamingObject', {{ $child->id }})" class="text-gray-400 font-bold">
                                             Rename
                                         </button>
                                     </li>
