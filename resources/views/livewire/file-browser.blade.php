@@ -1,7 +1,7 @@
 <div>   
     <div class="flex flex-wrap items-center justify-between mb-4">
         <div class="flex-grow md:mr-3 mt-4 md:mt-0 order-3 w-full md:w-auto md:order-1">
-            <input type="search" placeholder="Search files and folders" class="w-full pl-3 pr-3 h-12 border-2 rounded-lg">
+            <input type="search" wire:model="query" placeholder="Search files and folders" class="w-full pl-3 pr-3 h-12 border-2 rounded-lg">
         </div>
         <div class="order-2">
             <div>
@@ -19,16 +19,23 @@
     <div class="border-2 border-gray-200 rounded-lg">
         <div class="py-2 px-3">
             <div class="flex items-center">
-                @foreach($ancestors as $ancestor)
-                    <a href="{{ route('files', ['uuid' => $ancestor->uuid]) }}" class="font-bold text-gray-400">
-                        {{  $ancestor->objectable->name }}
-                    </a>
-                    @if(!$loop->last)
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-gray-300 w-5 h-5 mx-1">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    @endif
-                @endforeach
+                @if($this->query)
+                    <div class="font-bold text-gray-400">
+                        Found {{ $this->results->count() }} {{ Str::plural('result', $this->results->count()) }} 
+                        <button wire:click="$set('query', null)" href="#" class="text-blue-500 text-sm ml-6">Clear Search</button>
+                    </div>
+                @else
+                    @foreach($ancestors as $ancestor)
+                        <a href="{{ route('files', ['uuid' => $ancestor->uuid]) }}" class="font-bold text-gray-400">
+                            {{  $ancestor->objectable->name }}
+                        </a>
+                        @if(!$loop->last)
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-gray-300 w-5 h-5 mx-1">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        @endif
+                    @endforeach
+                @endif
             </div>
         </div>
 
@@ -59,7 +66,7 @@
                             <td></td>
                         </tr>
                     @endif
-                    @foreach($object->children as $child)
+                    @foreach($this->results as $child)
                     <tr class="border-gray-100  @if(!$loop->last) border-b-2 @endif hover:bg-gray-100">
                         <td class="py-2 px-3 flex items-center">
                             @if($child->objectable_type === 'file')
@@ -90,7 +97,7 @@
                                 @endif
 
                                 @if($child->objectable_type === 'file')
-                                <a href="" class="p-2 font-bold text-blue-600 flex-grow">
+                                <a href="{{ route('files.download', $child->objectable) }}" class="p-2 font-bold text-blue-600 flex-grow">
                                     {{ $child->objectable->name }}
                                 </a>
                                 @endif

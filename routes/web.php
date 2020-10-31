@@ -23,3 +23,4 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/files', [FileController::class, 'index'])->name('files');
+Route::get('/files/{file}', [FileController::class, 'download'])->name('files.download');

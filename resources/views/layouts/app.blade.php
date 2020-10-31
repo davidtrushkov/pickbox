@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
         <!-- Filepond stylesheet -->
-        <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+        <lin rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
 
         @livewireStyles
 

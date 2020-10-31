@@ -10,7 +10,8 @@ class FileBrowser extends Component
 {
 
     use WithFileUploads;
-    
+
+    public $query;
 
     public $upload;
 
@@ -26,12 +27,24 @@ class FileBrowser extends Component
     
     public $renamingObject;
 
-    public $renamingObjectState;
+    public $renamingObjectState = [
+        'name' => ''
+    ];
 
     public $showingFileUploadForm = false;
 
     public $confirmingObjectDeletion;
 
+
+    public function getResultsProperty() {
+
+        // Determine if we have search query
+        if(strlen($this->query)) {
+            return Obj::search($this->query)->where('team_id', $this->currentTeam->id)->get();
+        }
+
+        return $this->object->children;
+    }
 
     // Delete an object and refresh object
     public function deleteObject() {
@@ -79,7 +92,9 @@ class FileBrowser extends Component
     public function updatingRenamingObject($id) {
 
        if($id === null) {
-           return;
+          $this->renamingObjectState = [
+                'name' => ''
+          ];
        }
 
        if($object = Obj::forCurrentTeam()->find($id)) {

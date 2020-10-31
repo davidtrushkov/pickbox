@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\RelatesToTeams;
+use Laravel\Scout\Searchable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Obj extends Model
 {
-    use HasFactory, RelatesToTeams, HasRecursiveRelationships;
+    use HasFactory, Searchable, RelatesToTeams, HasRecursiveRelationships;
 
     public $table = 'objects';
 
@@ -38,6 +39,16 @@ class Obj extends Model
     // "morphTo" the "objectable" to the "objectable" row in "objects" table on Obj Model
     public function objectable() {
         return $this->morphTo();
+    }
+
+
+    public function toSearchableArray() {
+        return [
+            'id' => $this->id,
+            'team_id' => $this->team_id,
+            'name' => $this->objectable->name,
+            'path' => $this->ancestorsAndSelf->pluck('objectable.name')->reverse()->join('/')
+        ];
     }
 
 }
